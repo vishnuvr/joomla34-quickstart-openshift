@@ -7,6 +7,9 @@ same as your application name (using $_ENV['OPENSHIFT_APP_NAME']).  You can name
 your application whatever you want.  However, the name of the database will always
 match the application so you might have to update .openshift/action_hooks/build.
 
+Joomla! 3.0.3 is used in this repository.
+If you want Joomla! 2.5 then please check https://github.com/openshift/joomla-example
+
 
 Running on OpenShift
 ----------------------------
