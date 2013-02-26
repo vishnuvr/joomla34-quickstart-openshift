@@ -27,7 +27,7 @@ Add MySQL support to your application
 Add this upstream Joomla repo
 
     cd joomla
-    git remote add upstream -m master git://github.com/meghraj27/joomla3-quickstart-openshift-example.git
+    git remote add upstream -m master git://github.com/openshift-quickstart/joomla3-openshift-quickstart.git
     git pull -s recursive -X theirs upstream master
     # note that the git pull above can be used later to pull updates to Joomla
     
