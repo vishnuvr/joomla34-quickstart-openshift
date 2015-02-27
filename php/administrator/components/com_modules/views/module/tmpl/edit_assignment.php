@@ -3,7 +3,7 @@
  * @package     Joomla.Administrator
  * @subpackage  com_modules
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -107,7 +107,7 @@ JFactory::getDocument()->addScriptDeclaration($script);
 							<li>
 								<div class="treeselect-item pull-left">
 									<input type="checkbox" class="pull-left" name="jform[assigned][]" id="<?php echo $id . $link->value; ?>" value="<?php echo (int) $link->value; ?>"<?php echo $selected ? ' checked="checked"' : ''; ?> />
-									<label for="<?php echo $id . $link->value; ?>" class="pull-left"><?php echo $link->text; ?></label>
+									<label for="<?php echo $id . $link->value; ?>" class="pull-left"><?php echo $link->text; ?> <span class="small"><?php echo JText::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($link->alias));?></span></label>
 								</div>
 						<?php
 
@@ -122,6 +122,9 @@ JFactory::getDocument()->addScriptDeclaration($script);
 					<?php endif; ?>
 				<?php endforeach; ?>
 			</ul>
+			<div id="noresultsfound" style="display:none;" class="alert alert-no-items">
+				<?php echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+			</div>
 			<div style="display:none;" id="treeselectmenu">
 				<div class="pull-left nav-hover treeselect-menu">
 					<div class="btn-group">

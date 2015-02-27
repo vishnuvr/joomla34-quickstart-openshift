@@ -3,7 +3,7 @@
  * @package     Joomla.Administrator
  * @subpackage  com_users
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -12,16 +12,14 @@ defined('_JEXEC') or die;
 /**
  * User notes model class.
  *
- * @package     Joomla.Administrator
- * @subpackage  com_users
- * @since       2.5
+ * @since  2.5
  */
 class UsersModelNotes extends JModelList
 {
 	/**
 	 * Class constructor.
 	 *
-	 * @param  array  $config  An optional associative array of configuration settings.
+	 * @param   array  $config  An optional associative array of configuration settings.
 	 *
 	 * @since  2.5
 	 */
@@ -76,19 +74,20 @@ class UsersModelNotes extends JModelList
 		$query->from('#__user_notes AS a');
 
 		// Join over the category
-		$query->select('c.title AS category_title, c.params AS category_params');
-		$query->leftJoin('#__categories AS c ON c.id = a.catid');
+		$query->select('c.title AS category_title, c.params AS category_params')
+			->join('LEFT', '#__categories AS c ON c.id = a.catid');
 
 		// Join over the users for the note user.
-		$query->select('u.name AS user_name');
-		$query->leftJoin('#__users AS u ON u.id = a.user_id');
+		$query->select('u.name AS user_name')
+			->join('LEFT', '#__users AS u ON u.id = a.user_id');
 
 		// Join over the users for the checked out user.
-		$query->select('uc.name AS editor');
-		$query->leftJoin('#__users AS uc ON uc.id = a.checked_out');
+		$query->select('uc.name AS editor')
+			->join('LEFT', '#__users AS uc ON uc.id = a.checked_out');
 
 		// Filter by search in title
 		$search = $this->getState('filter.search');
+
 		if (!empty($search))
 		{
 			if (stripos($search, 'id:') === 0)
@@ -101,23 +100,26 @@ class UsersModelNotes extends JModelList
 			}
 			else
 			{
-				$search = $db->Quote('%' . $db->escape($search, true) . '%');
+				$search = $db->quote('%' . str_replace(' ', '%', $db->escape(trim($search), true) . '%'));
 				$query->where('((a.subject LIKE ' . $search . ') OR (u.name LIKE ' . $search . ') OR (u.username LIKE ' . $search . '))');
 			}
 		}
 
 		// Filter by published state
 		$published = $this->getState('filter.state');
+
 		if (is_numeric($published))
 		{
-			$query->where('a.state = '.(int) $published);
-		} elseif ($published === '')
+			$query->where('a.state = ' . (int) $published);
+		}
+		elseif ($published === '')
 		{
 			$query->where('(a.state IN (0, 1))');
 		}
 
 		// Filter by a single or group of categories.
 		$categoryId = (int) $this->getState('filter.category_id');
+
 		if ($categoryId)
 		{
 			if (is_scalar($section))
@@ -128,11 +130,12 @@ class UsersModelNotes extends JModelList
 
 		// Filter by a single user.
 		$userId = (int) $this->getState('filter.user_id');
+
 		if ($userId)
 		{
 			// Add the body and where filter.
-			$query->select('a.body');
-			$query->where('a.user_id = ' . $userId);
+			$query->select('a.body')
+				->where('a.user_id = ' . $userId);
 		}
 
 		// Add the list ordering clause.
@@ -179,6 +182,7 @@ class UsersModelNotes extends JModelList
 
 		// Filter by search in title
 		$search = JFactory::getApplication()->input->get('u_id', 0, 'int');
+
 		if ($search != 0)
 		{
 			$user->load((int) $search);
@@ -191,6 +195,9 @@ class UsersModelNotes extends JModelList
 	 * Method to auto-populate the model state.
 	 *
 	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @param   string  $ordering   An optional ordering field.
+	 * @param   string  $direction  An optional direction (asc|desc).
 	 *
 	 * @return  void
 	 *
@@ -210,7 +217,7 @@ class UsersModelNotes extends JModelList
 		$value = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $value);
 
-		$published = $this->getUserStateFromRequest($this->context.'.filter.state', 'filter_published', '', 'string');
+		$published = $this->getUserStateFromRequest($this->context . '.filter.state', 'filter_published', '', 'string');
 		$this->setState('filter.state', $published);
 
 		$section = $app->getUserStateFromRequest($this->context . '.filter.category_id', 'filter_category_id');

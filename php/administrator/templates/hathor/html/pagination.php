@@ -3,7 +3,7 @@
  * @package     Joomla.Administrator
  * @subpackage  Template.hathor
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -64,8 +64,6 @@ defined('_JEXEC') or die;
 
 function pagination_list_footer($list)
 {
-	$lang = JFactory::getLanguage();
-
 	/**
 	 * Fix javascript jump menu
 	 *
@@ -91,7 +89,6 @@ function pagination_list_footer($list)
 
 function pagination_list_render($list)
 {
-	$lang = JFactory::getLanguage();
 	$html = null;
 
 	if ($list['start']['active'])
@@ -144,5 +141,13 @@ function pagination_item_active(&$item)
 
 function pagination_item_inactive(&$item)
 {
-	return "<span>".$item->text."</span>";
+	if ($item->active)
+	{
+		$class = 'class="active"';
+	}
+	else
+	{
+		$class = '';
+	}
+	return '<span ' . $class . '>' . $item->text . '</span>';
 }

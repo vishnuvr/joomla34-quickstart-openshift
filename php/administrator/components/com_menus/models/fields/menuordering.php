@@ -3,7 +3,7 @@
  * @package     Joomla.Administrator
  * @subpackage  com_menus
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -14,16 +14,14 @@ JFormHelper::loadFieldClass('list');
 /**
  * Form Field class for the Joomla Framework.
  *
- * @package     Joomla.Administrator
- * @subpackage  com_menus
- * @since       1.6
+ * @since  1.6
  */
 class JFormFieldMenuOrdering extends JFormFieldList
 {
 	/**
 	 * The form field type.
 	 *
-	 * @var		string
+	 * @var        string
 	 * @since   1.7
 	 */
 	protected $type = 'MenuOrdering';
@@ -33,6 +31,7 @@ class JFormFieldMenuOrdering extends JFormFieldList
 	 * The method requires that parent be set.
 	 *
 	 * @return  array  The field option objects or false if the parent field has not been set
+	 *
 	 * @since   1.7
 	 */
 	protected function getOptions()
@@ -41,25 +40,27 @@ class JFormFieldMenuOrdering extends JFormFieldList
 
 		// Get the parent
 		$parent_id = $this->form->getValue('parent_id', 0);
-		if ( empty($parent_id))
+
+		if (empty($parent_id))
 		{
 			return false;
 		}
+
 		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
+		$query = $db->getQuery(true)
+			->select('a.id AS value, a.title AS text')
+			->from('#__menu AS a')
 
-		$query->select('a.id AS value, a.title AS text');
-		$query->from('#__menu AS a');
+			->where('a.published >= 0')
+			->where('a.parent_id =' . (int) $parent_id);
 
-		$query->where('a.published >= 0');
-		$query->where('a.parent_id =' . (int) $parent_id);
 		if ($menuType = $this->form->getValue('menutype'))
 		{
-			$query->where('a.menutype = '.$db->quote($menuType));
+			$query->where('a.menutype = ' . $db->quote($menuType));
 		}
 		else
 		{
-			$query->where('a.menutype != '.$db->quote(''));
+			$query->where('a.menutype != ' . $db->quote(''));
 		}
 
 		$query->order('a.lft ASC');
@@ -87,10 +88,12 @@ class JFormFieldMenuOrdering extends JFormFieldList
 
 		return $options;
 	}
+
 	/**
-	 * Method to get the field input markup
+	 * Method to get the field input markup.
 	 *
 	 * @return  string  The field input markup.
+	 *
 	 * @since   1.7
 	 */
 	protected function getInput()

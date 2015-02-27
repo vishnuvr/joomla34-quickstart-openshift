@@ -3,7 +3,7 @@
  * @package     Joomla.Site
  * @subpackage  com_finder
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -12,9 +12,7 @@ defined('_JEXEC') or die;
 /**
  * Search HTML view class for the Finder package.
  *
- * @package     Joomla.Site
- * @subpackage  com_finder
- * @since       2.5
+ * @since  2.5
  */
 class FinderViewSearch extends JViewLegacy
 {
@@ -76,7 +74,7 @@ class FinderViewSearch extends JViewLegacy
 		if (strpos($this->query->input, '"'))
 		{
 			// Get the application router.
-			$router =& $app->getRouter();
+			$router =& $app::getRouter();
 
 			// Fix the q variable in the URL.
 			if ($router->getVar('q') !== $this->query->input)
@@ -127,7 +125,7 @@ class FinderViewSearch extends JViewLegacy
 		$fields = null;
 
 		// Get the URI.
-		$uri = JURI::getInstance(JRoute::_($this->query->toURI()));
+		$uri = JUri::getInstance(JRoute::_($this->query->toURI()));
 		$uri->delVar('q');
 		$uri->delVar('o');
 		$uri->delVar('t');
@@ -135,9 +133,10 @@ class FinderViewSearch extends JViewLegacy
 		$uri->delVar('d2');
 		$uri->delVar('w1');
 		$uri->delVar('w2');
+		$elements = $uri->getQuery(true);
 
 		// Create hidden input elements for each part of the URI.
-		foreach ($uri->getQuery(true) as $n => $v)
+		foreach ($elements as $n => $v)
 		{
 			if (is_scalar($v))
 			{
@@ -202,15 +201,15 @@ class FinderViewSearch extends JViewLegacy
 
 		if (empty($title))
 		{
-			$title = $app->getCfg('sitename');
+			$title = $app->get('sitename');
 		}
-		elseif ($app->getCfg('sitename_pagetitles', 0) == 1)
+		elseif ($app->get('sitename_pagetitles', 0) == 1)
 		{
-			$title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+			$title = JText::sprintf('JPAGETITLE', $app->get('sitename'), $title);
 		}
-		elseif ($app->getCfg('sitename_pagetitles', 0) == 2)
+		elseif ($app->get('sitename_pagetitles', 0) == 2)
 		{
-			$title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
+			$title = JText::sprintf('JPAGETITLE', $title, $app->get('sitename'));
 		}
 
 		$this->document->setTitle($title);

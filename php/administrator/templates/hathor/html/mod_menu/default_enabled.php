@@ -3,7 +3,7 @@
  * @package     Joomla.Administrator
  * @subpackage  mod_menu
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -86,20 +86,23 @@ if ($user->authorise('core.manage', 'com_users'))
 	}
 
 	$menu->addChild(
-		new JMenuNode(JText::_('MOD_MENU_COM_USERS_NOTE_CATEGORIES'), 'index.php?option=com_categories&view=categories&extension=com_users.notes', 'class:category'), $createUser
+		new JMenuNode(JText::_('MOD_MENU_COM_USERS_NOTE_CATEGORIES'), 'index.php?option=com_categories&view=categories&extension=com_users', 'class:category'), $createUser
 	);
 	if ($createUser)
 	{
 		$menu->addChild(
-			new JMenuNode(JText::_('MOD_MENU_COM_CONTENT_NEW_CATEGORY'), 'index.php?option=com_categories&task=category.add&extension=com_users.notes', 'class:newarticle')
+			new JMenuNode(JText::_('MOD_MENU_COM_CONTENT_NEW_CATEGORY'), 'index.php?option=com_categories&task=category.add&extension=com_users', 'class:newarticle')
 		);
 		$menu->getParent();
 	}
 
-	$menu->addSeparator();
-	$menu->addChild(
-		new JMenuNode(JText::_('MOD_MENU_MASS_MAIL_USERS'), 'index.php?option=com_users&view=mail', 'class:massmail')
-	);
+	if (JFactory::getApplication()->get('massmailoff', 0) != 1)
+	{
+		$menu->addSeparator();
+		$menu->addChild(
+			new JMenuNode(JText::_('MOD_MENU_MASS_MAIL_USERS'), 'index.php?option=com_users&view=mail', 'class:massmail')
+		);
+	}
 
 	$menu->getParent();
 }
@@ -127,7 +130,10 @@ if ($user->authorise('core.manage', 'com_menus'))
 	$menu->addSeparator();
 
 	// Menu Types
-	foreach (ModMenuHelper::getMenus() as $menuType)
+	$menuTypes = ModMenuHelper::getMenus();
+	$menuTypes = JArrayHelper::sortObjects($menuTypes, 'title', 1, false);
+
+	foreach ($menuTypes as $menuType)
 	{
 		$alt = '*' .$menuType->sef. '*';
 		if ($menuType->home == 0)
@@ -314,7 +320,7 @@ if ($showhelp == 1)
 	}
 	$lang->setDebug($debug);
 	$menu->addChild(
-		new JMenuNode(JText::_('MOD_MENU_HELP_DOCUMENTATION'), 'http://docs.joomla.org', 'class:help-docs', false, '_blank')
+		new JMenuNode(JText::_('MOD_MENU_HELP_DOCUMENTATION'), 'https://docs.joomla.org', 'class:help-docs', false, '_blank')
 	);
 	$menu->addSeparator();
 
@@ -352,30 +358,30 @@ $cim = $user->authorise('core.manage', 'com_checkin');
 
 	if ($su):
 		$menu->addChild(
-		new JMenuNode(JText::_('MOD_MENU_CONFIGURATION'), 'index.php?option=com_config')
+		new JMenuNode(JText::_('MOD_MENU_CONFIGURATION'), 'index.php?option=com_config', 'class:config')
 		);
 		$menu->addChild(
-		new JMenuNode(JText::_('MOD_MENU_SYSTEM_INFORMATION'), 'index.php?option=com_admin&view=sysinfo')
+		new JMenuNode(JText::_('MOD_MENU_SYSTEM_INFORMATION'), 'index.php?option=com_admin&view=sysinfo', 'class:info')
 	);
 	endif;
 	if  ($cam):
 		$menu->addChild(
-		new JMenuNode(JText::_('MOD_MENU_CLEAR_CACHE'), 'index.php?option=com_cache')
+		new JMenuNode(JText::_('MOD_MENU_CLEAR_CACHE'), 'index.php?option=com_cache', 'class:clear')
 		);
 		$menu->addChild(
-		new JMenuNode(JText::_('MOD_MENU_PURGE_EXPIRED_CACHE'), 'index.php?option=com_cache&view=purge')
+		new JMenuNode(JText::_('MOD_MENU_PURGE_EXPIRED_CACHE'), 'index.php?option=com_cache&view=purge', 'class:purge')
 		);
 	endif;
 	if  ($cim):
 		$menu->addChild(
-		new JMenuNode(JText::_('MOD_MENU_GLOBAL_CHECKIN'), 'index.php?option=com_checkin')
+		new JMenuNode(JText::_('MOD_MENU_GLOBAL_CHECKIN'), 'index.php?option=com_checkin', 'class:checkin')
 		);
 	endif;
 		$menu->addChild(
-		new JMenuNode(JText::_('MOD_MENU_USER_PROFILE'), 'index.php?option=com_admin&task=profile.edit&id='. $user->id)
+		new JMenuNode(JText::_('MOD_MENU_USER_PROFILE'), 'index.php?option=com_admin&task=profile.edit&id='. $user->id, 'class:profile')
 		);
 		$menu->addChild(
-		new JMenuNode(JText::_('MOD_MENU_LOGOUT'), 'index.php?option=com_login&task=logout&'. JSession::getFormToken() .'=1')
+		new JMenuNode(JText::_('MOD_MENU_LOGOUT'), 'index.php?option=com_login&task=logout&'. JSession::getFormToken() .'=1', 'class:logout')
 		);
 
 	$menu->getParent();

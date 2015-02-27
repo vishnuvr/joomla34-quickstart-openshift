@@ -3,7 +3,7 @@
  * @package     Joomla.Platform
  * @subpackage  Date
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -26,9 +26,7 @@ defined('JPATH_PLATFORM') or die;
  * @property-read  string   $week          W - Numeric representation of the day of the week.
  * @property-read  string   $year          Y - A full numeric representation of a year, 4 digits.
  *
- * @package     Joomla.Platform
- * @subpackage  Date
- * @since       11.1
+ * @since  11.1
  */
 class JDate extends DateTime
 {
@@ -389,10 +387,12 @@ class JDate extends DateTime
 	 * @return  JDate
 	 *
 	 * @since   11.1
+	 * @note    This method can't be type hinted due to a PHP bug: https://bugs.php.net/bug.php?id=61483
 	 */
 	public function setTimezone($tz)
 	{
 		$this->tz = $tz;
+
 		return parent::setTimezone($tz);
 	}
 
@@ -416,20 +416,21 @@ class JDate extends DateTime
 	 * Gets the date as an SQL datetime string.
 	 *
 	 * @param   boolean          $local  True to return the date string in the local time zone, false to return it in GMT.
-	 * @param   JDatabaseDriver  $dbo    The database driver or null to use JFactory::getDbo()
+	 * @param   JDatabaseDriver  $db     The database driver or null to use JFactory::getDbo()
 	 *
 	 * @return  string     The date string in SQL datetime format.
 	 *
-	 * @link http://dev.mysql.com/doc/refman/5.0/en/datetime.html
+	 * @link    http://dev.mysql.com/doc/refman/5.0/en/datetime.html
 	 * @since   11.4
 	 */
-	public function toSql($local = false, JDatabaseDriver $dbo = null)
+	public function toSql($local = false, JDatabaseDriver $db = null)
 	{
-		if ($dbo === null)
+		if ($db === null)
 		{
-			$dbo = JFactory::getDbo();
+			$db = JFactory::getDbo();
 		}
-		return $this->format($dbo->getDateFormat(), $local, false);
+
+		return $this->format($db->getDateFormat(), $local, false);
 	}
 
 	/**

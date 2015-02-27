@@ -3,7 +3,7 @@
  * @package     Joomla.Administrator
  * @subpackage  com_users
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -12,16 +12,15 @@ defined('_JEXEC') or die;
 /**
  * Methods supporting a list of user group records.
  *
- * @package     Joomla.Administrator
- * @subpackage  com_users
- * @since       1.6
+ * @since  1.6
  */
 class UsersModelGroups extends JModelList
 {
 	/**
 	 * Constructor.
 	 *
-	 * @param   array  An optional associative array of configuration settings.
+	 * @param   array  $config  An optional associative array of configuration settings.
+	 *
 	 * @see     JController
 	 * @since   1.6
 	 */
@@ -46,14 +45,17 @@ class UsersModelGroups extends JModelList
 	 *
 	 * Note. Calling getState in this method will result in recursion.
 	 *
+	 * @param   string  $ordering   An optional ordering field.
+	 * @param   string  $direction  An optional direction (asc|desc).
+	 *
+	 * @return  void
+	 *
 	 * @since   1.6
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app = JFactory::getApplication('administrator');
-
 		// Load the filter state.
-		$search = $this->getUserStateFromRequest($this->context.'.filter.search', 'filter_search');
+		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
 
 		// Load the parameters.
@@ -63,6 +65,7 @@ class UsersModelGroups extends JModelList
 		// List state information.
 		parent::populateState('a.lft', 'asc');
 	}
+
 	/**
 	 * Method to get a store id based on model configuration state.
 	 *
@@ -70,15 +73,15 @@ class UsersModelGroups extends JModelList
 	 * different modules that might need different sets of data or different
 	 * ordering requirements.
 	 *
-	 * @param   string  $id	A prefix for the store id.
+	 * @param   string  $id  A prefix for the store id.
 	 *
 	 * @return  string  A store id.
 	 */
 	protected function getStoreId($id = '')
 	{
 		// Compile the store id.
-		$id	.= ':'.$this->getState('filter.search');
-		$id	.= ':'.$this->getState('filter.search');
+		$id .= ':' . $this->getState('filter.search');
+		$id .= ':' . $this->getState('filter.search');
 
 		return parent::getStoreId($id);
 	}
@@ -87,11 +90,13 @@ class UsersModelGroups extends JModelList
 	 * Gets the list of groups and adds expensive joins to the result set.
 	 *
 	 * @return  mixed  An array of data items on success, false on failure.
+	 *
 	 * @since   1.6
 	 */
 	public function getItems()
 	{
-		$db		= $this->getDbo();
+		$db = $this->getDbo();
+
 		// Get a storage key.
 		$store = $this->getStoreId();
 
@@ -110,6 +115,7 @@ class UsersModelGroups extends JModelList
 
 			// First pass: get list of the group id's and reset the counts.
 			$groupIds = array();
+
 			foreach ($items as $item)
 			{
 				$groupIds[] = (int) $item->id;
@@ -117,12 +123,12 @@ class UsersModelGroups extends JModelList
 			}
 
 			// Get the counts from the database only for the users in the list.
-			$query	= $db->getQuery(true);
+			$query = $db->getQuery(true);
 
 			// Count the objects in the user group.
 			$query->select('map.group_id, COUNT(DISTINCT map.user_id) AS user_count')
-				->from($db->quoteName('#__user_usergroup_map').' AS map')
-				->where('map.group_id IN ('.implode(',', $groupIds).')')
+				->from($db->quoteName('#__user_usergroup_map') . ' AS map')
+				->where('map.group_id IN (' . implode(',', $groupIds) . ')')
 				->group('map.group_id');
 
 			$db->setQuery($query);
@@ -134,7 +140,8 @@ class UsersModelGroups extends JModelList
 			}
 			catch (RuntimeException $e)
 			{
-				$this->setError($e->getMessage);
+				$this->setError($e->getMessage());
+
 				return false;
 			}
 
@@ -162,8 +169,8 @@ class UsersModelGroups extends JModelList
 	protected function getListQuery()
 	{
 		// Create a new query object.
-		$db		= $this->getDbo();
-		$query	= $db->getQuery(true);
+		$db = $this->getDbo();
+		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
 		$query->select(
@@ -172,30 +179,32 @@ class UsersModelGroups extends JModelList
 				'a.*'
 			)
 		);
-		$query->from($db->quoteName('#__usergroups').' AS a');
+		$query->from($db->quoteName('#__usergroups') . ' AS a');
 
 		// Add the level in the tree.
-		$query->select('COUNT(DISTINCT c2.id) AS level');
-		$query->join('LEFT OUTER', $db->quoteName('#__usergroups').' AS c2 ON a.lft > c2.lft AND a.rgt < c2.rgt');
-		$query->group('a.id, a.lft, a.rgt, a.parent_id, a.title');
+		$query->select('COUNT(DISTINCT c2.id) AS level')
+			->join('LEFT OUTER', $db->quoteName('#__usergroups') . ' AS c2 ON a.lft > c2.lft AND a.rgt < c2.rgt')
+			->group('a.id, a.lft, a.rgt, a.parent_id, a.title');
 
 		// Filter the comments over the search string if set.
 		$search = $this->getState('filter.search');
+
 		if (!empty($search))
 		{
 			if (stripos($search, 'id:') === 0)
 			{
-				$query->where('a.id = '.(int) substr($search, 3));
-			} else {
-				$search = $db->Quote('%'.$db->escape($search, true).'%');
-				$query->where('a.title LIKE '.$search);
+				$query->where('a.id = ' . (int) substr($search, 3));
+			}
+			else
+			{
+				$search = $db->quote('%' . str_replace(' ', '%', $db->escape(trim($search), true) . '%'));
+				$query->where('a.title LIKE ' . $search);
 			}
 		}
 
 		// Add the list ordering clause.
-		$query->order($db->escape($this->getState('list.ordering', 'a.lft')).' '.$db->escape($this->getState('list.direction', 'ASC')));
+		$query->order($db->escape($this->getState('list.ordering', 'a.lft')) . ' ' . $db->escape($this->getState('list.direction', 'ASC')));
 
-		//echo nl2br(str_replace('#__','jos_',$query));
 		return $query;
 	}
 }

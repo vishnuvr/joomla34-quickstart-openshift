@@ -3,14 +3,14 @@
  * @package     Joomla.Administrator
  * @subpackage  Template.hathor
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
 
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-JHtml::_('behavior.tooltip');
+
 JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.combobox');
 $hasContent = empty($this->item->module) || $this->item->module == 'custom' || $this->item->module == 'mod_custom';
@@ -25,7 +25,7 @@ if ($hasContent)
 $script .= "	Joomla.submitform(task, document.getElementById('module-form'));
 				if (self != top)
 				{
-					window.top.setTimeout('window.parent.SqueezeBox.close()', 1000);
+					window.top.setTimeout('window.parent.jModalClose()', 1000);
 				}
 			}
 	}";

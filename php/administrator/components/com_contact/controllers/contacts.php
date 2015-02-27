@@ -3,27 +3,24 @@
  * @package     Joomla.Administrator
  * @subpackage  com_contact
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
 
 /**
- * Articles list controller class.
+ * Contacts list controller class.
  *
- * @package     Joomla.Administrator
- * @subpackage  com_contact
- * @since       1.6
+ * @since  1.6
  */
 class ContactControllerContacts extends JControllerAdmin
 {
 	/**
 	 * Constructor.
 	 *
-	 * @param   array  $config	An optional associative array of configuration settings.
+	 * @param   array  $config  An optional associative array of configuration settings.
 	 *
-	 * @return  ContactControllerContacts
 	 * @see     JController
 	 * @since   1.6
 	 */
@@ -38,6 +35,7 @@ class ContactControllerContacts extends JControllerAdmin
 	 * Method to toggle the featured setting of a list of contacts.
 	 *
 	 * @return  void
+	 *
 	 * @since   1.6
 	 */
 	public function featured()
@@ -58,7 +56,8 @@ class ContactControllerContacts extends JControllerAdmin
 		foreach ($ids as $i => $id)
 		{
 			$item = $model->getItem($id);
-			if (!$user->authorise('core.edit.state', 'com_contact.category.'.(int) $item->catid))
+
+			if (!$user->authorise('core.edit.state', 'com_contact.category.' . (int) $item->catid))
 			{
 				// Prune items that you can't change.
 				unset($ids[$i]);
@@ -85,10 +84,12 @@ class ContactControllerContacts extends JControllerAdmin
 	/**
 	 * Proxy for getModel.
 	 *
-	 * @param   string	$name	The name of the model.
-	 * @param   string	$prefix	The prefix for the PHP class name.
+	 * @param   string  $name    The name of the model.
+	 * @param   string  $prefix  The prefix for the PHP class name.
+	 * @param   array   $config  Array of configuration parameters.
 	 *
 	 * @return  JModel
+	 *
 	 * @since   1.6
 	 */
 	public function getModel($name = 'Contact', $prefix = 'ContactModel', $config = array('ignore_request' => true))
@@ -99,34 +100,17 @@ class ContactControllerContacts extends JControllerAdmin
 	}
 
 	/**
-	 * Method to save the submitted ordering values for records via AJAX.
+	 * Function that allows child controller access to model data
+	 * after the item has been deleted.
+	 *
+	 * @param   JModelLegacy  $model  The data model object.
+	 * @param   integer       $ids    The array of ids for items being deleted.
 	 *
 	 * @return  void
 	 *
-	 * @since   3.0
+	 * @since   12.2
 	 */
-	public function saveOrderAjax()
+	protected function postDeleteHook(JModelLegacy $model, $ids = null)
 	{
-		// Get the input
-		$pks   = $this->input->post->get('cid', array(), 'array');
-		$order = $this->input->post->get('order', array(), 'array');
-
-		// Sanitize the input
-		JArrayHelper::toInteger($pks);
-		JArrayHelper::toInteger($order);
-
-		// Get the model
-		$model = $this->getModel();
-
-		// Save the ordering
-		$return = $model->saveorder($pks, $order);
-
-		if ($return)
-		{
-			echo "1";
-		}
-
-		// Close the application
-		JFactory::getApplication()->close();
 	}
 }

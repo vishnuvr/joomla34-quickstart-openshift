@@ -3,7 +3,7 @@
  * @package     Joomla.Site
  * @subpackage  com_content
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -15,9 +15,7 @@ JLoader::register('CategoryHelperAssociation', JPATH_ADMINISTRATOR . '/component
 /**
  * Content Component Association Helper
  *
- * @package     Joomla.Site
- * @subpackage  com_content
- * @since       3.0
+ * @since  3.0
  */
 abstract class ContentHelperAssociation extends CategoryHelperAssociation
 {
@@ -45,13 +43,13 @@ abstract class ContentHelperAssociation extends CategoryHelperAssociation
 		{
 			if ($id)
 			{
-				$associations = ContentHelper::getAssociations($id);
+				$associations = JLanguageAssociations::getAssociations('com_content', '#__content', 'com_content.item', $id);
 
 				$return = array();
 
 				foreach ($associations as $tag => $item)
 				{
-					$return[$tag] = ContentHelperRoute::getArticleRoute($item->id, $item->catid, $item->language);
+					$return[$tag] = ContentHelperRoute::getArticleRoute($item->id, (int) $item->catid, $item->language);
 				}
 
 				return $return;
@@ -64,6 +62,5 @@ abstract class ContentHelperAssociation extends CategoryHelperAssociation
 		}
 
 		return array();
-
 	}
 }
