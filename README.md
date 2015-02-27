@@ -1,4 +1,4 @@
-Joomla 3.0 on OpenShift
+Joomla 3.4 on OpenShift
 ===================
 
 This git repository helps you get up and running quickly w/ a Joomla installation
@@ -7,7 +7,7 @@ same as your application name (using $_ENV['OPENSHIFT_APP_NAME']).  You can name
 your application whatever you want.  However, the name of the database will always
 match the application so you might have to update .openshift/action_hooks/build.
 
-Joomla! 3.0.3 is used in this repository.
+Joomla! 3.4 is used in this repository.
 If you want Joomla! 2.5 then please check https://github.com/openshift/joomla-example
 
 
